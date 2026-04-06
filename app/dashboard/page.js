@@ -1,5 +1,6 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { auth, db } from "@/lib/firebase";
@@ -7,7 +8,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 
 export default function Dashboard() {
-
+  const { data: session, status } = useSession();
   const [message, setMessage] = useState("Styled for today ✨");
   const [weatherIcon, setWeatherIcon] = useState("🌤");
   const [todayOutfit, setTodayOutfit] = useState(null);
@@ -122,7 +123,14 @@ export default function Dashboard() {
             {Array.from({ length: 7 }).map((_, i) => {
               const d = new Date();
               d.setDate(d.getDate() + i);
+if (status === "loading") {
+  return <div>Loading...</div>;
+}
 
+if (!session) {
+  window.location.href = "/login";
+  return null;
+}
               return (
                 <div
                   key={i}
