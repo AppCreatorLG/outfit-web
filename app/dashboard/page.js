@@ -128,7 +128,8 @@ if (status === "loading") {
 }
 
 if (!session) {
-  window.location.href = "/login";
+  return <div>Not logged in</div>;
+}
   return null;
 }
               return (
