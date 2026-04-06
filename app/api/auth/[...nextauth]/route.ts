@@ -9,9 +9,13 @@ const handler = NextAuth({
     }),
   ],
 
-  // 🔒 Force JWT so NO database is needed
   session: {
     strategy: "jwt",
+  },
+
+  // 👇 THIS LINE FIXES THE EMAIL ERROR COMPLETELY
+  pages: {
+    signIn: "/login",
   },
 
   secret: process.env.NEXTAUTH_SECRET,
