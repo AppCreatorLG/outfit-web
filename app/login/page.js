@@ -10,12 +10,12 @@ export default function LoginPage() {
       </h1>
 
       <button
-        onClick={() =>
-          signIn("google", {
-            redirect: true,
-            callbackUrl: "/dashboard",
-          })
-        }
+      onClick={() =>
+  signIn("google", {
+    redirect: true,
+    callbackUrl: "/",
+  })
+}
         className="bg-black text-white py-2 px-4 rounded"
       >
         Continue with Google
