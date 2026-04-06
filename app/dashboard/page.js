@@ -16,11 +16,14 @@ export default function Dashboard() {
   // 🔐 AUTH
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
-      if (!user) window.location.href = "/";
-    });
-    return () => unsub();
-  }, []);
+if (status === "loading") {
+  return <div>Loading...</div>;
+}
 
+if (!session) {
+  window.location.href = "/login";
+  return null;
+}
   // 🌦 WEATHER
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -123,16 +126,6 @@ export default function Dashboard() {
             {Array.from({ length: 7 }).map((_, i) => {
               const d = new Date();
               d.setDate(d.getDate() + i);
-if (status === "loading") {
-  return <div>Loading...</div>;
-}
-
-if (!session) {
-  return <div>Not logged in</div>;
-}
-  return null;
-}
-              return (
                 <div
                   key={i}
                   className="min-w-[65px] bg-white rounded-2xl p-3 shadow-sm text-center"
