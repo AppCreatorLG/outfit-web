@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { auth, db } from "@/lib/firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { collection, getDocs } from "firebase/firestore";
 
 export default function Dashboard() {
@@ -13,17 +13,15 @@ export default function Dashboard() {
   const [weatherIcon, setWeatherIcon] = useState("🌤");
   const [todayOutfit, setTodayOutfit] = useState(null);
 
-  // 🔐 AUTH
+  // ✅ AUTH CHECK
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
-if (status === "loading") {
-  return <div>Loading...</div>;
-}
+    if (status === "loading") return;
 
-if (!session) {
-  window.location.href = "/login";
-  return null;
-}
+    if (!session) {
+      window.location.href = "/login";
+    }
+  }, [session, status]);
+
   // 🌦 WEATHER
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -54,8 +52,8 @@ if (!session) {
       const today = new Date().toISOString().split("T")[0];
 
       const match = snap.docs
-        .map(doc => doc.data())
-        .find(o => o.date === today);
+        .map((doc) => doc.data())
+        .find((o) => o.date === today);
 
       if (match) setTodayOutfit(match.outfit);
     };
@@ -68,9 +66,13 @@ if (!session) {
     window.location.href = "/";
   };
 
+  // ⏳ LOADING STATE
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-[#f2f2f7] flex justify-center">
-
       <div className="w-full max-w-md min-h-screen px-5 pt-12 pb-28">
 
         {/* HEADER */}
@@ -84,14 +86,13 @@ if (!session) {
           </button>
         </div>
 
-        {/* 🔥 TODAY CARD */}
+        {/* TODAY CARD */}
         <div className="bg-black text-white rounded-3xl p-6 mb-6">
           <p className="text-sm opacity-80">Today</p>
           <p className="text-xl font-semibold mt-1">
             {weatherIcon} {message}
           </p>
 
-          {/* 👕 OUTFIT PREVIEW */}
           {todayOutfit ? (
             <div className="grid grid-cols-2 gap-2 mt-4">
               {todayOutfit.slice(0, 4).map((item, i) =>
@@ -105,20 +106,18 @@ if (!session) {
               )}
             </div>
           ) : (
-            <p className="text-xs mt-3 opacity-70">
-              No outfit yet
-            </p>
+            <p className="text-xs mt-3 opacity-70">No outfit yet</p>
           )}
 
           <button
-            onClick={() => window.location.href = "/outfit"}
+            onClick={() => (window.location.href = "/outfit")}
             className="mt-4 bg-white text-black px-4 py-2 rounded-xl text-sm"
           >
             Style Me ✨
           </button>
         </div>
 
-        {/* 📅 CALENDAR STRIP */}
+        {/* CALENDAR STRIP */}
         <div className="mb-6">
           <p className="text-sm text-gray-500 mb-2">This Week</p>
 
@@ -126,6 +125,8 @@ if (!session) {
             {Array.from({ length: 7 }).map((_, i) => {
               const d = new Date();
               d.setDate(d.getDate() + i);
+
+              return (
                 <div
                   key={i}
                   className="min-w-[65px] bg-white rounded-2xl p-3 shadow-sm text-center"
