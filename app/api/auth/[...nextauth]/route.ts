@@ -4,8 +4,8 @@ import GoogleProvider from "next-auth/providers/google";
 const handler = NextAuth({
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
   ],
 
@@ -13,7 +13,6 @@ const handler = NextAuth({
     strategy: "jwt",
   },
 
-  // 👇 THIS LINE FIXES THE EMAIL ERROR COMPLETELY
   pages: {
     signIn: "/login",
   },
